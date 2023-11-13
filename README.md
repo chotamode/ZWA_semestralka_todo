@@ -1,5 +1,3 @@
-Write readme.md for my semestral work. semestral work is simple todo list where users can create tasks and accomplish them. There is also collaboration feature and admin who can manage all tasks. Work is writen in PHP, html, js, css. You are in readme.md file and also write more text and use markdown formatting.
-
 # Semestral Work - Simple Todo List
 
 This project is a simple todo list application developed as a semestral work. It allows users to create tasks and accomplish them.
