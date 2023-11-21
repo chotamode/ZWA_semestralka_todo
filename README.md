@@ -17,6 +17,10 @@ The application is written in:
 - JavaScript
 - CSS
 
+## Used resources
+
+- Icons https://www.freepik.com/author/uicons/icons/uicons-rounded-bold_5087?t=f
+
 ## Getting Started
 
 To get a local copy up and running, follow these simple steps.
@@ -45,4 +49,3 @@ Please replace placeholders with your actual information.
 
 - Replace placeholders with your actual information.
 - Add more specific instructions in the "Getting Started" section.
-- Add more details about how to contribute to your project.

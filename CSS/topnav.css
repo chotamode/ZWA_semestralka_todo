@@ -1,0 +1,10 @@
+.topnav {
+    background-color: rgb(155, 77, 190);
+    width: 100vw;
+    height: 44px;
+}
+
+#topnav_login,
+#topnav_register {
+    float: right;
+}
