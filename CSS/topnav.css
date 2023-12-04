@@ -2,9 +2,12 @@
     background-color: rgb(155, 77, 190);
     width: 100vw;
     height: 44px;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 #topnav_login,
-#topnav_register {
+#topnav_register,
+#topnav_logout {
     float: right;
 }

@@ -7,7 +7,7 @@
     </head>
 
     <body>
-        <?php require_once 'topnav.php' ?>
+        <?php require_once 'Blocks/topnav.php' ?>
         <div class="register_container">
             <form class="register_form" action="../Service/register.php" method="post">
                 <label for="username">Username</label>

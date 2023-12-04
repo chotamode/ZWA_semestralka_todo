@@ -11,21 +11,15 @@ require_once '../Repository/Repository.php';
 // login user if form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
     $repository = new Repository();
-    $users = $repository->getAllUsers();
+    $user = $repository->getUserByUsername($_POST['username']);
 
-    // Check if username exists
-    foreach ($users as $user) {
-        if ($user->username === $_POST['username']) {
-            // Check if password is correct
-            if ($user->password === $_POST['password']) {
+    if ($user->password === $_POST['password']) {
 
-                setcookie('user_id', $user->id, time() + (86400 * 30), "/"); // 86400 = 1 day
+        setcookie('user_id', $user->id, time() + (86400 * 30), "/"); // 86400 = 1 day
 
-                // Redirect to home page
-                header('Location: ../Pages/tasks.php');
-                exit();
-            }
-        }
+        // Redirect to home page
+        header('Location: ../Pages/tasks.php');
+        exit();
     }
 
     // Redirect to login page
