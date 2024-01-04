@@ -8,6 +8,16 @@ This project is a simple todo list application developed as a semestral work. It
 - **Collaboration**: Users can collaborate on tasks.
 - **Admin Control**: An admin user can manage all tasks.
 
+## Types of users:
+
+- **User**: Basic user with permission to create and manage their own tasks.
+
+- **Admin**: a user with advanced permissions to manage user accounts and support other users.
+
+- **Owner**: A user with the highest privileges, capable of managing the entire system.
+
+Task Collaboration:
+
 ## Technologies Used
 
 The application is written in:

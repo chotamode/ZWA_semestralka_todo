@@ -9,7 +9,7 @@
     <body>
         <?php require_once 'Blocks/topnav.php' ?>
         <div class="register_container">
-            <form class="register_form" action="../Service/register.php" method="post">
+            <form class="register_form" action="../Controller/AuthController.php?action=register" method="POST">
                 <label for="username">Username</label>
                 <input type="text" name="username" id="username" required>
 

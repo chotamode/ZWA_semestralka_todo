@@ -32,3 +32,13 @@
     background-color: rgb(255, 255, 255);
     cursor: pointer;
 }
+
+.task > form {
+    display:flex;
+    flex-direction: column;
+}
+
+.task_input{
+    border: none;
+    background-color: transparent;
+}

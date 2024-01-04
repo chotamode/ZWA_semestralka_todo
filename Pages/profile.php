@@ -17,7 +17,7 @@
             require_once 'Blocks/topnav.php';
             require_once '../Model/User.php';
             require_once '../Repository/Repository.php';
-            $repository = new Repository();
+            $repository = Repository::getInstance();
             $user = $repository->getUserById($_COOKIE['user_id']);
         ?>
 

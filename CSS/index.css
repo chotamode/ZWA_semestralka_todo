@@ -1,4 +1,5 @@
-object{
-    background-color: aliceblue;
-    /* width: 100vw; */
+.hidden {
+    visibility: hidden;
 }
+
+/* comment */

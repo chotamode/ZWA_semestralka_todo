@@ -11,3 +11,7 @@
 #topnav_logout {
     float: right;
 }
+
+.topnav_icon {
+    height: 100%;
+}
