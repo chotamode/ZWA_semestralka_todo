@@ -1,12 +1,12 @@
 <?php
 
-require_once '../Model/InvitationStatus.php';
-require_once '../Model/TaskStatus.php';
-require_once '../Model/Project.php';
-require_once '../Model/Task.php';
-require_once '../Model/User.php';
-require_once '../Model/Invitation.php';
-require_once '../Model/Role.php';
+require_once __DIR__ . '/../Model/InvitationStatus.php';
+require_once __DIR__ . '/../Model/TaskStatus.php';
+require_once __DIR__ . '/../Model/Project.php';
+require_once __DIR__ . '/../Model/Task.php';
+require_once __DIR__ . '/../Model/User.php';
+require_once __DIR__ . '/../Model/Invitation.php';
+require_once __DIR__ . '/../Model/Role.php';
 
 /**
  * Class Repository
@@ -26,10 +26,10 @@ class Repository {
 
         $servername = "localhost";
         $port = "8889";
-        $username = "root";
-        $password = "password";
+        $username = "nurmuedu";
+        $password = "webove aplikace";
 
-        $this->connection = new PDO("mysql:host=$servername;port=$port;dbname=todo_list", $username, $password);
+        $this->connection = new PDO("mysql:host=$servername;port=$port;dbname=nurmuedu", $username, $password);
     }
 
     public static function getInstance() {

@@ -111,7 +111,7 @@
         $pages = $authService->getAllUsersCount() / 5;
         $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
         for ($i = 1; $i <= $pages + 1; $i++) {
-            echo '<a href="../Pages/owner.php?page=' . $i . '" class="page ' . ($currentPage == $i ? 'current_page' : '') . '">' . $i . '</a>';
+            echo '<a href="../Pages/admin.php?page=' . $i . '" class="page ' . ($currentPage == $i ? 'current_page' : '') . '">' . $i . '</a>';
         }
         ?>
     </div>

@@ -15,7 +15,21 @@
   if ($current_page != 'index.php') {
     require_once '../Service/AuthService.php';
     $authService = new AuthService();
-}
+  }
+  if ($current_page == 'index.php') {
+    $registerImg = './Images/register.svg';
+    $loginImg = './Images/login.svg';
+    $homeImg = './Images/home.svg';
+  }else{
+    $registerImg = '../Images/register.svg';
+    $loginImg = '../Images/login.svg';
+    $homeImg = '../Images/home.svg';
+  }
+  if ($current_page == 'login.php') {
+    $registerHref = '../Pages/register.php';
+  }else{
+    $registerHref = './Pages/register.php';
+  }
 
   if (isset($_COOKIE['user_id'])) {
     echo '<a id="topnav_profile" class="topnav_button" href="../Pages/profile.php"><img src="../Images/profile.svg" alt="Profile" class="topnav_icon"></a>';
@@ -31,9 +45,9 @@
       echo '<a id="topnav_owner" class="topnav_button" href="../Pages/owner.php"><img src="../Images/owner_button.svg" alt="Owner" class="topnav_icon"></a>';
     }
   } else {
-    echo '<a id="topnav_home" class="topnav_button" href="../index.php"><img src="../Images/home.svg" alt="Home" class="topnav_icon"></a>';
-    echo '<a id="topnav_login" class="topnav_button" href="../Pages/login.php"><img src="../Images/login.svg" alt="Login" class="topnav_icon"></a>';
-    echo '<a id="topnav_register" class="topnav_button" href="../Pages/register.php"><img src="../Images/register.svg" alt="Register" class="topnav_icon"></a>';
+    echo '<a id="topnav_home" class="topnav_button" href="../index.php"><img src=" ' . $homeImg . ' " alt="Home" class="topnav_icon"></a>';
+    echo '<a id="topnav_login" class="topnav_button" href="../Pages/login.php"><img src=" ' . $loginImg . ' " alt="Login" class="topnav_icon"></a>';
+    echo '<a id="topnav_register" class="topnav_button" href="'. $registerHref .'"><img src="'. $registerImg  .'" alt="Register" class="topnav_icon"></a>';
   }
   ?>
 </div>

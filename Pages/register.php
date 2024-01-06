@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,7 +28,7 @@
      
     require_once 'Blocks/topnav.php';
     require_once 'Blocks/notification.php';
-    session_start();
+
     ?>
     <div class="register_container">
         <form class="register_form" action="../Controller/AuthController.php?action=register" method="POST">

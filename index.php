@@ -9,18 +9,22 @@
 	ini_set('display_errors', 1); 
 	ini_set('display_startup_errors', 1); 
 	error_reporting(E_ALL);
+
+    if (isset($_COOKIE['user_id'])) {
+      header('Location: ./Pages/tasks.php');
+    }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<link rel="stylesheet" href="CSS/index.css">
-		<link rel="stylesheet" href="CSS/topnav.css">
+		<link rel="stylesheet" href="./CSS/index.css">
+		<link rel="stylesheet" href="./CSS/topnav.css">
 		<title>Todo List</title>
 	</head>
 	<body>
-		<?php require_once 'Pages/Blocks/topnav.php' ?>
+		<?php require_once __DIR__ . '/Pages/Blocks/topnav.php' ?>
 
 		<div id="home_page_info">
 			<h1>Welcome to the Todo List Application!</h1>
