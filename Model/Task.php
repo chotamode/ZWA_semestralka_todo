@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Task
+ * 
+ * This class is a model class representing a task. This class is used to implement tasks that users can work on.
+ * 
+ * @param int $id Task ID that is unique for each task in the database (auto-incremented)
+ * @param string $name Task name
+ * @param string $description Task description
+ * @param DateTime $deadline Task deadline
+ * @param TaskStatus $taskStatus Task status (TODO, DOING, DONE)
+ * @param int $projectId Project ID that is unique for each project in the database foreign key to the project table
+ * 
+ * @category Model
+ * @package  Model
+ */
+
 require_once 'TaskStatus.php';
 
 class Task {

@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * TaskStatus
+ * 
+ * This is an enum class representing a task status.
+ * 
+ * @category Model
+ * @package  Model
+ */
+
 enum TaskStatus: string{
     case TODO = 'TODO';
     case DOING = 'DOING';

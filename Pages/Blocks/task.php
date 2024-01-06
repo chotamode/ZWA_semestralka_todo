@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * task.php
+ * 
+ * This is a block file that is used to render a task.
+ * 
+ * @category Blocks
+ * @package  Blocks
+ * 
+ */
+
 require_once '../Service/ProjectService.php';
 
 function renderTask(Task $task)
@@ -9,24 +19,22 @@ function renderTask(Task $task)
 
     $projects = $projectService->getProjectsByUserId($_COOKIE['user_id']);
 
-    // generating string for options in select
     $optionsString = '';
     foreach ($projects as $project) {
-        // auto select if task.projectId == project.id
-        $optionsString .= '<option value="' . $project->id . '" ' . ($task->projectId == $project->id ? 'selected' : '') . '>' . $project->name . '</option>';
+        $optionsString .= '<option value="' . $project->id . '" ' . ($task->projectId == $project->id ? 'selected' : '') . '>' . htmlspecialchars($project->name) . '</option>';
     }
 
     return '
     <div class="task" id="task_' . $task->id . '">
         <form method="post" action="../Controller/TaskController.php?action=update_task&id=' . $task->id . '">
 
-            <label for="task_' . $task->id . '_name">Name</label>
-            <input type="text" class="task_input" name="name" id="task_' . $task->id . '_name" value="' . $task->name . '" required>
+            <label for="task_' . $task->id . '_name"></label>
+            <input type="text" class="task_input" name="name" id="task_' . $task->id . '_name" value="' . htmlspecialchars($task->name) . '" required>
 
-            <label for="task_' . $task->id . '_description">Description</label>
-            <input type="text" class="task_input" name="description" id="task_' . $task->id . '_description" value="' . $task->description . '" required>
+            <label for="task_' . $task->id . '_description"></label>
+            <textarea class="task_input" name="description" id="task_' . $task->id . '_description" required>' . htmlspecialchars($task->description) . '</textarea>
 
-            <label for="task_' . $task->id . '_deadline">Deadline</label>
+            <label for="task_' . $task->id . '_deadline"></label>
             <input type="date" class="task_input" name="deadline" id="task_' . $task->id . '_deadline" value="' . $task->deadline->format('Y-m-d') . '" required>
 
             <label for="task_' . $task->id . '_project"></label>
@@ -36,7 +44,7 @@ function renderTask(Task $task)
             </select>
 
             <label for="task_' . $task->id . '_options"></label>
-            <select name="taskStatus" id="task_' . $task->id . '_options">
+            <select class="taskStatus" name="taskStatus" id="task_' . $task->id . '_options">
                 <option value="' . TaskStatus::TODO->value . '" ' . ($task->taskStatus->value == TaskStatus::TODO->value ? 'selected' : '') . '>Todo</option>
                 <option value="' . TaskStatus::DOING->value . '" ' . ($task->taskStatus->value == TaskStatus::DOING->value ? 'selected' : '') . '>Doing</option>
                 <option value="' . TaskStatus::DONE->value . '" ' . ($task->taskStatus->value == TaskStatus::DONE->value ? 'selected' : '') . '>Done</option>
@@ -46,7 +54,7 @@ function renderTask(Task $task)
             
         </form>
         <form method="post" action="../Controller/TaskController.php?action=delete_task&id=' . $task->id . '">
-            <button type="submit">Delete</button>
+            <button type="submit" class="task_delete_button"></button>
         </form>
     </div>';
 }

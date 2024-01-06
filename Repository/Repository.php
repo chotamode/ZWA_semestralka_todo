@@ -12,6 +12,9 @@ require_once '../Model/Role.php';
  * Class Repository
  * 
  * This class is responsible for storing and retrieving data from the SQL database.
+ * 
+ * @category Repository
+ * @package  Repository
  */
 
 class Repository {
@@ -37,17 +40,31 @@ class Repository {
         return self::$instance;
     }
 
-    public function getAllUsers(): array {
-        $statement = $this->connection->prepare('SELECT * FROM users');
+    public function getAllUsers($page=-1): array {
+        $limit = 5;
+
+        if($page == -1) {
+            $statement = $this->connection->prepare('SELECT * FROM users');
+        }else{
+            $statement = $this->connection->prepare('SELECT * FROM users LIMIT :limit OFFSET :offset');
+            $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $statement->bindValue(':offset', ($page - 1) * $limit, PDO::PARAM_INT);
+        }
         $statement->execute();
         $users = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         $result = [];
         foreach ($users as $user) {
-            $result[] = new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole']);
+            $result[] = new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole'], $user['salt']);
         }
 
         return $result;
+    }
+
+    public function getTotalUsers(): int {
+        $statement = $this->connection->prepare('SELECT COUNT(*) FROM users');
+        $statement->execute();
+        return $statement->fetchColumn();
     }
 
     public function getUserById(int $id): User {
@@ -57,21 +74,40 @@ class Repository {
         ]);
         $user = $statement->fetch(PDO::FETCH_ASSOC);
 
-        return new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole']);
+        return new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole'], $user['salt']);
     }
 
-    public function getUserByUsername(string $username): User {
+    public function getUserByUsername(string $username): ?User {
         $statement = $this->connection->prepare('SELECT * FROM users WHERE username = :username');
         $statement->execute([
             'username' => $username,
         ]);
         $user = $statement->fetch(PDO::FETCH_ASSOC);
 
-        return new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole']);
+        if($user == null) {
+            return null;
+        }
+
+        return new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole'], $user['salt']);
+    }
+
+    public function getUserByEmail(string $email): ?User {
+        $statement = $this->connection->prepare('SELECT * FROM users WHERE email = :email');
+        $statement->execute([
+            'email' => $email,
+        ]);
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if($user == null) {
+            return null;
+        }
+
+        return new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole'], $user['salt']);
     }
 
     public function createUser(User $user): void {
-        $statement = $this->connection->prepare('INSERT INTO users (name, surname, username, email, password, UserRole) VALUES (:name, :surname, :username, :email, :password, :userRole)');
+
+        $statement = $this->connection->prepare('INSERT INTO users (name, surname, username, email, password, UserRole, salt) VALUES (:name, :surname, :username, :email, :password, :userRole, :salt)');
         $statement->execute([
             'name' => $user->name,
             'surname' => $user->surname,
@@ -79,7 +115,9 @@ class Repository {
             'email' => $user->email,
             'password' => $user->password,
             'userRole' => $user->role->value,
+            'salt' => $user->salt,
         ]);
+
     }
 
     public function updateUser(User $user): void {
@@ -96,18 +134,53 @@ class Repository {
     }
 
     public function deleteUser(int $id): void {
+
+        $statement = $this->connection->prepare('SELECT task_id FROM users_tasks WHERE user_id = :id');
+        $statement->execute(['id' => $id]);
+        $tasksIds = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($tasksIds as $taskId) {
+            $this->deleteTask($taskId['task_id']);
+        }
+
+        $statement = $this->connection->prepare('DELETE FROM users_tasks WHERE user_id = :id');
+        $statement->execute(['id' => $id]);
+    
+        $statement = $this->connection->prepare('DELETE FROM project_users WHERE user_id = :id');
+        $statement->execute(['id' => $id]);
+
+        $statement = $this->connection->prepare('DELETE FROM invitation WHERE sender_id = :id');
+        $statement->execute(['id' => $id]);
+
+        $statement = $this->connection->prepare('DELETE FROM invitation WHERE receiver_id = :id');
+        $statement->execute(['id' => $id]);
+    
         $statement = $this->connection->prepare('DELETE FROM users WHERE id = :id');
-        $statement->execute([
-            'id' => $id,
-        ]);
+        $statement->execute(['id' => $id]);
     }
 
-    public function updateUserPassword(int $id, string $password): void {
-        $statement = $this->connection->prepare('UPDATE users SET password = :password WHERE id = :id');
+    public function updateUserPassword(int $id, string $password, string $salt): void {
+        $statement = $this->connection->prepare('UPDATE users SET password = :password, salt = :salt WHERE id = :id');
         $statement->execute([
             'id' => $id,
             'password' => $password,
+            'salt' => $salt,
         ]);
+    }
+
+    public function searchUsers(string $search): array {
+        $statement = $this->connection->prepare('SELECT * FROM users WHERE name LIKE :search OR surname LIKE :search OR username LIKE :search OR email LIKE :search');
+        $statement->execute([
+            'search' => '%' . $search . '%',
+        ]);
+        $users = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $result = [];
+        foreach ($users as $user) {
+            $result[] = new User($user['id'], $user['name'], $user['surname'], $user['username'], $user['email'], $user['password'], $user['UserRole'], $user['salt']);
+        }
+
+        return $result;
     }
 
     // TASKS
@@ -216,7 +289,7 @@ class Repository {
      * @return void
      */
     public function updateTaskStatusById(int $id, TaskStatus $taskStatus): void {
-        $statement = $this->connection->prepare('UPDATE tasks SET task_status = :taskStatus WHERE id = :id');
+        $statement = $this->connection->prepare('UPDATE tasks SET taskstatus = :taskStatus WHERE id = :id');
         $statement->execute([
             'id' => $id,
             'taskStatus' => $taskStatus->value,
@@ -292,15 +365,16 @@ class Repository {
     // PROJECTS
 
     public function createProject(Project $project): void {
-        $statement = $this->connection->prepare('INSERT INTO project (name) VALUES (:name)');
+        $statement = $this->connection->prepare('INSERT INTO project (name, owner_id) VALUES (:name, :ownerId)');
         $statement->execute([
             'name' => $project->name,
+            'ownerId' => $project->ownerId,
         ]);
 
-        //insert relation to project_users table (many to many)
         $projectId = $this->connection->lastInsertId();
-        $statement = $this->connection->prepare('INSERT INTO project_users (project_id, user_id) VALUES (:projectId, :userId)');
+
         foreach ($project->userIds as $userId) {
+            $statement = $this->connection->prepare('INSERT INTO project_users (project_id, user_id) VALUES (:projectId, :userId)');
             $statement->execute([
                 'projectId' => $projectId,
                 'userId' => $userId,
@@ -317,6 +391,11 @@ class Repository {
     }
 
     public function deleteProject(int $id): void {
+        $statement = $this->connection->prepare('DELETE FROM invitation WHERE project_id = :id');
+        $statement->execute([
+            'id' => $id,
+        ]);
+
         $statement = $this->connection->prepare('DELETE FROM project_users WHERE project_id = :id');
         $statement->execute([
             'id' => $id,
@@ -336,8 +415,14 @@ class Repository {
         ]);
     }
 
+    /**
+     * Assigns user to project by username. In database there is table called project_users which has project_id and user_id columns.
+     * 
+     * @param int $userId user id. Using it to get all assigned projects to user.
+     * 
+     * @return array array of projects
+     */
     public function getprojectByUserId(int $userId): array {
-        // in database there is table called project_users which has project_id and user_id columns
 
         $statement = $this->connection->prepare('SELECT * FROM project_users INNER JOIN project ON project_users.project_id = project.id WHERE project_users.user_id = :userId');
         $statement->execute([
@@ -347,7 +432,7 @@ class Repository {
 
         $result = [];
         foreach ($project as $project) {
-            $result[] = new Project($project['id'], $project['name'], $this->getUserIdsByProjectId($project['id']), $this->getTaskIdsByProjectId($project['id']));
+            $result[] = new Project($project['id'], $project['name'], $this->getUserIdsByProjectId($project['id']), $this->getTaskIdsByProjectId($project['id']), $project['owner_id']);
         }
 
         return $result;
@@ -360,9 +445,16 @@ class Repository {
         ]);
         $project = $statement->fetch(PDO::FETCH_ASSOC);
 
-        return new Project($project['id'], $project['name'], $this->getUserIdsByProjectId($project['id']), $this->getTaskIdsByProjectId($project['id']));
+        return new Project($project['id'], $project['name'], $this->getUserIdsByProjectId($project['id']), $this->getTaskIdsByProjectId($project['id']), $project['owner_id']);
     }
 
+    /**
+     * Returns array of user ids assigned to project with given id.
+     * 
+     * @param int $projectId project id
+     * 
+     * @return array array of user ids
+     */
     public function getUserIdsByProjectId(int $projectId): array {
         $statement = $this->connection->prepare('SELECT user_id FROM project_users WHERE project_id = :projectId');
         $statement->execute([
@@ -378,6 +470,13 @@ class Repository {
         return $result;
     }
 
+    /**
+     * Returns array of task ids assigned to project with given id.
+     * 
+     * @param int $projectId project id
+     * 
+     * @return array array of task ids
+     */
     public function getTaskIdsByProjectId(int $projectId): array {
         $statement = $this->connection->prepare('SELECT task_id FROM project_tasks WHERE project_id = :projectId');
         $statement->execute([
@@ -393,6 +492,13 @@ class Repository {
         return $result;
     }
 
+    /**
+     * Returns array of projects that user with given id is assigned to.
+     * 
+     * @param int $userId user id
+     * 
+     * @return array array of projects
+     */
     public function getProjectsByUserId(int $userId): array {
         $statement = $this->connection->prepare('SELECT * FROM project_users INNER JOIN project ON project_users.project_id = project.id WHERE project_users.user_id = :userId');
         $statement->execute([
@@ -402,10 +508,31 @@ class Repository {
 
         $result = [];
         foreach ($projects as $project) {
-            $result[] = new Project($project['id'], $project['name'], $this->getUserIdsByProjectId($project['id']), $this->getTaskIdsByProjectId($project['id']));
+            $result[] = new Project($project['id'], $project['name'], $this->getUserIdsByProjectId($project['id']), $this->getTaskIdsByProjectId($project['id']), $project['owner_id']);
         }
 
         return $result;
+    }
+
+    /**
+     * Unassigns user from project by user id. In database there is table called project_users which has project_id and user_id columns.
+     * 
+     * @param int $userId user id
+     * 
+     * @return array array of projects
+     */
+    public function removeUserFromProject(int $projectId, int $userId): void {
+        $statement = $this->connection->prepare('DELETE FROM invitation WHERE project_id = :projectId AND receiver_id = :userId');
+        $statement->execute([
+            'projectId' => $projectId,
+            'userId' => $userId,
+        ]);
+
+        $statement = $this->connection->prepare('DELETE FROM project_users WHERE project_id = :projectId AND user_id = :userId');
+        $statement->execute([
+            'projectId' => $projectId,
+            'userId' => $userId,
+        ]);
     }
 
     // invitation
@@ -448,6 +575,13 @@ class Repository {
         ]);
     }
 
+    /**
+     * Returns array of invitations that user with given id sent.
+     * 
+     * @param int $userId user id
+     * 
+     * @return array array of invitations
+     */
     public function getSentInvitationsByUserId(int $userId): array {
         $statement = $this->connection->prepare('SELECT * FROM invitation WHERE sender_id = :userId');
         $statement->execute([
@@ -457,12 +591,19 @@ class Repository {
 
         $result = [];
         foreach ($invitations as $invitation) {
-            $result[] = new Invitation($invitation['id'], $invitation['project_id'], $invitation['sender_id'], $invitation['receiver_id'], stringToInvitationStatus($invitation['status']));
+            $result[] = new Invitation($invitation['id'], $invitation['project_id'], $invitation['sender_id'], $invitation['receiver_id'], stringToInvitationStatus($invitation['status']), $invitation['project_name']);
         }
 
         return $result;
     }
 
+    /**
+     * Returns array of invitations that user with given id received.
+     * 
+     * @param int $userId user id
+     * 
+     * @return array array of invitations
+     */
     public function getReceivedInvitationsByUserId(int $userId): array {
         $statement = $this->connection->prepare('SELECT * FROM invitation WHERE receiver_id = :userId');
         $statement->execute([
@@ -486,6 +627,92 @@ class Repository {
         $invitation = $statement->fetch(PDO::FETCH_ASSOC);
 
         return new Invitation($invitation['id'], $invitation['project_id'], $invitation['sender_id'], $invitation['receiver_id'], stringToInvitationStatus($invitation['status']), $invitation['project_name']);
+    }
+
+    /**
+     * Returns sent invitations to project with given id.
+     * 
+     * @param int $projectId project id
+     * 
+     * @return array array of invitations
+     */
+    public function getSentInvitationsByProjectId(int $projectId): array {
+        $statement = $this->connection->prepare('SELECT * FROM invitation WHERE project_id = :projectId');
+        $statement->execute([
+            'projectId' => $projectId,
+        ]);
+        $invitations = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $result = [];
+        foreach ($invitations as $invitation) {
+            $result[] = new Invitation($invitation['id'], $invitation['project_id'], $invitation['sender_id'], $invitation['receiver_id'], stringToInvitationStatus($invitation['status']), $invitation['project_name']);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Saves image path to database and associates it with user. If user already have profile image, deletes it from database.
+     * 
+     * @param int $userId user id
+     * 
+     * @return void
+     */
+    public function uploadProfileImage(int $userId, string $imagePath): void {
+        if($this->isUserAlreadyHaveProfileImage($userId)) {
+            $statement = $this->connection->prepare('DELETE FROM image_user WHERE user_id = :userId');
+            $statement->execute([
+                'userId' => $userId,
+            ]);
+        }
+
+        $statement = $this->connection->prepare('INSERT INTO image_user (image_id, user_id) VALUES (:imageId, :userId)');
+        $statement->execute([
+            'imageId' => $imagePath,
+            'userId' => $userId,
+        ]);
+    }
+
+    /**
+     * Returns true if user already have profile image, false otherwise.
+     * 
+     * @param int $userId user id
+     * 
+     * @return bool
+     */
+    public function isUserAlreadyHaveProfileImage(int $userId): bool {
+        $statement = $this->connection->prepare('SELECT image_id FROM image_user WHERE user_id = :userId');
+        $statement->execute([
+            'userId' => $userId,
+        ]);
+        $imageId = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if($imageId == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns image path associated with user with given id.
+     * 
+     * @param int $userId user id
+     * 
+     * @return string|null
+     */
+    public function getUserProfileImage($userId): ?string {
+        $statement = $this->connection->prepare('SELECT image_id FROM image_user WHERE user_id = :userId');
+        $statement->execute([
+            'userId' => $userId,
+        ]);
+        $imageId = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if($imageId == null) {
+            return null;
+        }else{
+            return $imageId['image_id'];
+        }
     }
 }
 ?>

@@ -1,0 +1,68 @@
+.search_form input{
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: var(--main-font-family);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.466);
+    margin-top: 15px;
+}
+
+.user_container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    margin: 23px;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0px 0px 10px 1px rgb(0, 0, 0);
+}
+
+.user_container>form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.user_container>form>input{
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: var(--main-font-family);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.466);
+}
+
+.user_container>form>label{
+    margin-top: 10px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.users_container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.user_container>form>select{
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: var(--main-font-family);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.466);
+}

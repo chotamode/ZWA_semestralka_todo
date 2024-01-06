@@ -1,8 +1,10 @@
+<!-- page for owner where he can do everything admin can but also ca make someone admin and also he can see tasks and redact them -->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Admin</title>
+    <title>Owner</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../CSS/tasks.css">
     <link rel="stylesheet" href="../CSS/index.css">
@@ -15,9 +17,9 @@
     <?php
 
     /**
-     * admin.php
+     * owner.php
      * 
-     * This file represents an admin page. It is used to display all users and update their information.
+     * This file represents an owner page. It is used to display all users and update their information. Owner can also make someone admin, delete users.
      * 
      * @category Pages
      * @package  Pages
@@ -36,15 +38,12 @@
     }
 
     /**
-     * Check if user is admin
+     * Check if user is owner
      */
-    if (!$authService->isUserRoleAdmin($_COOKIE['user_id'])) {
+    if (!$authService->isUserRoleOwner($_COOKIE['user_id'])) {
         header('Location: ../Pages/tasks.php');
     }
 
-    /**
-     * Get all users, if page is set get users for that page
-     */
     if(isset($_GET['page'])){
         $users = $authService->getAllUsers($_GET['page']);
     } else {
@@ -64,7 +63,6 @@
 
     <?php
 
-    // if search is set display search results
     if (isset($_GET['search'])) {
         $users = $authService->searchUsers($_GET['search']);
     }
@@ -82,6 +80,12 @@
                         <input type="text" name="username" id="username" value="' . htmlspecialchars($user->username) . '" required>
                         <label for="email">Email</label>
                         <input type="email" name="email" id="email" value="' . htmlspecialchars($user->email) . '" required>
+                        <label for="role">Role</label>
+                        <select name="role" id="role">
+                            <option value="User" ' . ($user->role == UserRole::User ? 'selected' : '') . '>User</option>
+                            <option value="Admin" ' . ($user->role ==  UserRole::Admin ? 'selected' : '') . '>Admin</option>
+                            <option value="Owner" ' . ($user->role ==  UserRole::Owner ? 'selected' : '') . '>Owner</option>
+                        </select>
                         <input type="submit" value="Update">
                     </form>';
         echo '<form action="../Controller/AuthController.php?action=admin_update_password&user_id=' . $user->id . '" method="POST">
@@ -91,20 +95,14 @@
                         <input type="password" name="password_confirm" id="password_confirm" required>
                         <input type="submit" value="Update password">
                     </form>';
+        echo '<form action="../Controller/AuthController.php?action=admin_delete&user_id=' . $user->id . '" method="POST">
+                        <input type="submit" value="Delete">
+                    </form>';
         echo '</div>';
     }
     echo '</div>';
 
-    ?>
-
-    <?php
-    require_once 'Blocks/notification.php';
-    if (isset($_GET['message'])) {
-        renderNotification($_GET['message']);
-    } elseif (isset($_GET['error'])) {
-        renderNotification($_GET['error']);
-    }
-    ?>
+?>
 
     <div class="pagination">
         <?php

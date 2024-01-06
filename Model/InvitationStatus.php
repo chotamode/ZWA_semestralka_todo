@@ -1,9 +1,17 @@
 <?php
 
+/**
+ * InvitationStatus
+ * 
+ * This is an enum class representing an invitation status.
+ * 
+ * @category Model
+ * @package  Model
+ */
 enum InvitationStatus: string{
-    case PENDING = 'PENDING';
-    case ACCEPTED = 'ACCEPTED';
-    case DECLINED = 'DECLINED';
+    case PENDING = 'Pending';
+    case ACCEPTED = 'Accepted';
+    case DECLINED = 'Declined';
 }
 
 function stringToInvitationStatus(string $invitationStatus): InvitationStatus {

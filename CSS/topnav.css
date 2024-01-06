@@ -1,9 +1,11 @@
 .topnav {
-    background-color: rgb(155, 77, 190);
+    background-color: rgba(0, 0, 0, 0.158);
     width: 100vw;
-    height: 44px;
+    height: 2vw;
     margin-left: 0;
     padding-left: 0;
+    padding-bottom: 7px;
+    padding-top: 7px;
 }
 
 #topnav_login,
@@ -14,4 +16,21 @@
 
 .topnav_icon {
     height: 100%;
+}
+
+.topnav_button{
+    height: 100%;
+}
+
+.topnav_button button{
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.topnav_icon{
+    margin-left: 5px;
+    margin-right: 5px;
 }

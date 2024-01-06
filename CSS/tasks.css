@@ -1,44 +1,222 @@
-.task_container{
+.task_container {
     display: inline-block;
     vertical-align: top;
-    border-radius: 10px;
-    border-color: rgb(0, 0, 0);
-    border-style: solid;
+    width: 33%;
 }
 
-#todo_container{
-    background-color: rgb(253, 173, 2, 0.39);
+.task_container>h2 {
+    text-align: center;
 }
 
-#doing_container{
-    background-color: rgb(0, 255, 0, 0.39);
+.task:hover {
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.466);
 }
 
-#done_container{
-    background-color: rgba(0, 0, 255, 0.39);
-}
-
-.task_container:hover{
-    filter: drop-shadow(0px 0px 10px rgb(0, 0, 0));
-}
-    
-.task{
+.task {
+    position: relative;
     display: block;
     margin: 10px;
     padding: 10px;
     border-radius: 10px;
-    border-color: rgb(0, 0, 0);
-    border-style: solid;
-    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.233);
+    background-color: transparent;
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.466);
+}
+
+.task select {
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: var(--main-font-family);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.466);
+}
+
+.task button,
+.add_task_button {
+    background: none;
+    font-family: var(--main-font-family);
+    border-radius: 50px;
+    padding: 5px;
     cursor: pointer;
 }
 
-.task > form {
-    display:flex;
+.task_delete_button{
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: none;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.task_delete_button::before {
+    content: "X";
+    font-weight: bold;
+}
+
+.task>form {
+    display: flex;
     flex-direction: column;
 }
 
 .task_input{
     border: none;
     background-color: transparent;
+}
+
+.task_input:focus {
+    outline: none;
+}
+
+.task_input[name="name"] {
+    font-size: 20px;
+    width: 80%;
+}
+
+input[name="deadline"] {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.849);
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+textarea[name="description"] {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.623);
+    font-weight: 300;
+    margin-bottom: 10px;
+    overflow-y: scroll;
+    height: 8rem;
+    resize: none;
+    padding-right: 30px;
+    scrollbar-width: none;
+}
+
+#sections_container {
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-top: 12px;
+}
+
+#add_task_container {
+    width: 30%;
+    position: absolute;
+    background-color: var(--main-background-color);
+    border: 1px solid rgba(0, 0, 0, 0.411);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0px 0px 10px 1px rgb(0, 0, 0);
+    margin-top: 10px;
+    z-index: 2;
+}
+
+#add_task_container>form {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+#add_filter_container {
+    /* display elements in a row */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.add_task_input,
+.add_task_select {
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-family: var(--main-font-family);
+    margin: 5px;
+    padding: 5px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.466);
+}
+
+.add_task_label {
+    margin-left: 0.9rem;
+}
+
+.add_task_input[name="description"] {
+    border-radius: 4px;
+}
+
+.project_filter_selector{
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.filter_submit_button{
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-left: 1px solid rgba(0, 0, 0, 0.466);
+}
+
+.filter_form{
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.466);
+    padding: 3px;
+    display: flex;
+    align-items: center;
+}
+
+#add_filter_container summary{
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.466);
+    border-radius: 50px;
+    padding: 8px;
+    cursor: pointer;
+    padding-left: 13px;
+    padding-right: 13px;
+}
+
+#add_filter_container summary::after{
+    content: "+";
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+#project_id{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Style for print */
+
+@media print {
+    .topnav,
+    #add_task_container,
+    #add_filter_container,
+    .task_delete_button,
+    .add_task_button,
+    button
+    {
+        display: none;
+    }
+
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    #sections_container {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .task_container{
+        width: 23%;
+    }
 }

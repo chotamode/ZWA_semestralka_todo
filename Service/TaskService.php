@@ -4,6 +4,15 @@ require_once('../Repository/Repository.php');
 require_once('../Model/Task.php');
 require_once('../Model/TaskStatus.php');
 
+/**
+ * TaskService
+ * 
+ * This class is a service class that is used to implement task-related business logic. Gives another layer of abstraction between the controller and the repository.
+ * 
+ * @category Service
+ * @package  Service
+ */
+
 class TaskService
 {
     private $repository;

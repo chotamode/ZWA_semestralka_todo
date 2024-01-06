@@ -1,28 +1,28 @@
-.register_container {
+.login_container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-.register_form {
+.login_form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 400px;
-    height: 500px;
+    height: 300px;
     background-color: none;
     border-radius: 10px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
-.register_form input {
+.login_form input {
     border-radius: 50px;
     padding: 5px;
 }
 
-#register_button {
+#login_button {
     border-radius: 50px;
     padding: 5px;
     width: 100px;
