@@ -49,5 +49,3 @@ To get a local copy up and running, follow these steps.
 ## Contact
 
 Name - [nurmuedu@fel.cvut.cz](vscode-file://vscode-app/c:/Users/Eduard/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html "mailto:&#x79;&#111;&#x75;&#114;&#64;&#101;&#x6d;&#x61;&#x69;&#108;&#x2e;&#99;&#x6f;&#x6d;")
-
-Project Link: [https://github.com/your_username/repo_name](vscode-file://vscode-app/c:/Users/Eduard/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html "https://github.com/your_username/repo_name")
