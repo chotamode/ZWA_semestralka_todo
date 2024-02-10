@@ -1,6 +1,6 @@
 # Semestral Work - Simple Todo List
 
-This project is a simple todo list application developed as a semestral work. It allows users to create tasks and accomplish them.
+This project is a simple todo list application developed as a semestral work. It allows users to create tasks and accomplish them. For explanation of code and packages open [a relative link](ProgrammerDocumentation.md)
 
 ## Features
 
